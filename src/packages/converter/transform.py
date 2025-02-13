@@ -8,14 +8,18 @@ from .calendar import create_ical
 from .data import convert_all
 
 
-def import_data(file: UploadedFile) -> DataFrame:
-    # !!! REFACTOR
-    """
-    Inputs:
-    - file: a file upload of a UBC workday class schedule
+def import_data(file: UploadedFile | DataFrame) -> DataFrame:
+    # TODO: !!! REFACTOR
+    # TODO: make usable when file is a DataFrame
+    """ Cleans the schedule data of a UBC schedule
+
+    Args:
+        file (UploadedFile): A file upload of a UBC workday schedule
+        file (Dataframe): A DataFrame obtained by read_excel from pandas
+                          of a UBC workday schedule
 
     Returns:
-    - a Dataframe of the schdeule content of the uploaded UBC workday
+        A Dataframe of the schedeule content of the uploaded UBC workday
     schedule
     """
 
@@ -95,7 +99,7 @@ def _find_end(file: UploadedFile) -> int:
         return 0
 
 
-def convert_file(file: UploadedFile) -> Calendar:
+def convert_file(file: UploadedFile | DataFrame) -> Calendar:
     data = import_data(file)
 
     converted = convert_all(data)
