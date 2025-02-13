@@ -10,7 +10,6 @@ from .data import convert_all
 
 def import_data(file: str | UploadedFile | DataFrame) -> DataFrame:
     # TODO: !!! REFACTOR
-    # TODO: make usable when file is a DataFrame
     """Cleans the schedule data of a UBC schedule
 
     Args:
@@ -50,8 +49,10 @@ def _find_start(file: str | UploadedFile | DataFrame) -> int:
     the schedule data
 
     """
-
-    data = read_excel(file, header=None)
+    if isinstance(file, DataFrame):
+        data = _no_header_df(file)
+    else:
+        data = read_excel(file, header=None)
 
     def _get_row_with_header() -> DataFrame:
         """
@@ -72,6 +73,7 @@ def _find_start(file: str | UploadedFile | DataFrame) -> int:
             & (data[10] == "Start Date")
             & (data[11] == "End Date")
         )
+
         return data[header]
 
     def _get_index_of_header() -> int:
@@ -79,6 +81,7 @@ def _find_start(file: str | UploadedFile | DataFrame) -> int:
         Returns the index of the first row in data that contains all the
         column names
         """
+
         return _get_row_with_header().index[0]
 
     return _get_index_of_header()
@@ -114,6 +117,15 @@ def _find_end(file: str | UploadedFile | DataFrame) -> int:
             index += 1
     else:
         return 0
+
+
+def _no_header_df(dataframe: DataFrame) -> DataFrame:
+    """
+    Moves the header of dataframe down and
+    sets a new header to be ints starting from 0
+    """
+
+    return DataFrame({})
 
 
 def convert_file(file: str | UploadedFile | DataFrame) -> Calendar:
