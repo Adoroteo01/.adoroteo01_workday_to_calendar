@@ -8,14 +8,18 @@ from .calendar import create_ical
 from .data import convert_all
 
 
-def import_data(file: UploadedFile | DataFrame) -> DataFrame:
+def import_data(file: str | UploadedFile | DataFrame) -> DataFrame:
     # TODO: !!! REFACTOR
     # TODO: make usable when file is a DataFrame
-    """ Cleans the schedule data of a UBC schedule
+    """Cleans the schedule data of a UBC schedule
 
     Args:
-        file (UploadedFile): A file upload of a UBC workday schedule
-        file (Dataframe): A DataFrame obtained by read_excel from pandas
+        file (str): A path to a UBC workday schedule excel file
+
+        file (UploadedFile): A file upload of a
+                             UBC workday schedule
+
+        file (DataFrame): A DataFrame obtained by read_excel from pandas
                           of a UBC workday schedule
 
     Returns:
@@ -29,13 +33,20 @@ def import_data(file: UploadedFile | DataFrame) -> DataFrame:
     return read_excel(file, skiprows=start, skipfooter=end)
 
 
-def _find_start(file: UploadedFile) -> int:
-    """
-    Inputs:
-    - file: a file upload of a UBC workday class schedule
+def _find_start(file: str | UploadedFile | DataFrame) -> int:
+    """Finds the index of the start of the schedule data
+    Args:
+        file (str): A path to a UBC workday schedule excel file
+
+        file (UploadedFile): A file upload of a
+                             UBC workday schedule
+
+        file (DataFrame): A DataFrame obtained by read_excel from pandas
+                          of a UBC workday schedule
+
 
     Returns:
-    - an int of the index of the begining row of (the column names)
+        An int of the index of the begining row of (the column names)
     the schedule data
 
     """
@@ -73,13 +84,19 @@ def _find_start(file: UploadedFile) -> int:
     return _get_index_of_header()
 
 
-def _find_end(file: UploadedFile) -> int:
-    """
-    Inputs:
-    - file: a file upload of a UBC workday class schedule
+def _find_end(file: str | UploadedFile | DataFrame) -> int:
+    """Finds the index of the end of the schedule data
+    Args:
+        file (str): A path to a UBC workday schedule excel file
+
+        file (UploadedFile): A file upload of a
+                             UBC workday schedule
+
+        file (DataFrame): A DataFrame obtained by read_excel from pandas
+                          of a UBC workday schedule
 
     Returns:
-    - the index of the ending row of the schedule data
+        The index of the ending row of the schedule data
     (the last enrolled course)
 
     """
@@ -99,7 +116,20 @@ def _find_end(file: UploadedFile) -> int:
         return 0
 
 
-def convert_file(file: UploadedFile | DataFrame) -> Calendar:
+def convert_file(file: str | UploadedFile | DataFrame) -> Calendar:
+    """Converts a UBC Schedule (file) to a Calendar object
+    Args:
+        file (str): A path to a UBC workday schedule excel file
+
+        file (UploadedFile): A file upload of a
+                             UBC workday schedule
+
+        file (DataFrame): A DataFrame obtained by read_excel from pandas
+                          of a UBC workday schedule
+
+    Returns:
+        A Calendar object from the icalendar package
+    """
     data = import_data(file)
 
     converted = convert_all(data)
