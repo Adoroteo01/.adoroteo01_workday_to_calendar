@@ -121,11 +121,21 @@ def _find_end(file: str | UploadedFile | DataFrame) -> int:
 
 def _no_header_df(dataframe: DataFrame) -> DataFrame:
     """
-    Moves the header of dataframe down and
-    sets a new header to be ints starting from 0
+    Makes a new dataframe where the header of dataframe moves down and
+    a new header is set to be ints starting from 0
     """
 
-    return DataFrame({})
+    if dataframe.equals(DataFrame({})):
+        return DataFrame({})
+
+    new_dataframe = dataframe.copy()
+
+    old_header = new_dataframe.columns.tolist()
+    old_values = new_dataframe.values.tolist()
+
+    new_values = [old_header] + old_values
+
+    return DataFrame(new_values)
 
 
 def convert_file(file: str | UploadedFile | DataFrame) -> Calendar:
