@@ -1,6 +1,7 @@
 import pytest
 from pandas import read_excel
 
+from src.packages.converter import convert_file
 from src.packages.converter.ubcschedule import UBCSchedule
 
 
@@ -40,5 +41,8 @@ def test_constructor(schedule, data):
 
 
 def test_update_calendar(schedule, data):
-    # TODO
-    pass
+
+    schedule.update_calendar()
+    expected = convert_file(data)
+
+    assert expected.equals(schedule.calendar)
