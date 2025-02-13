@@ -1,9 +1,10 @@
 import pytest
-from pandas import read_excel
+from pandas import DataFrame, read_excel
 
 from src.packages.converter.transform import (
     _find_end,
     _find_start,
+    _no_header_df,
     import_data,
 )
 
@@ -76,7 +77,8 @@ def test_find_start_path(data_path, start):
 
 # Test the case where a DataFrame is passed to _find_start
 def test_find_start_dataframe(data_dataframe, start):
-    assert _find_start(data_dataframe) == start
+    x = _find_start(data_dataframe)
+    assert x == start
 
 
 # Test the case where a file path is passed to _find_end
@@ -87,6 +89,39 @@ def test_find_end_path(data_path, end):
 # Test the case where a DataFrame is passed to _find_end
 def test_find_end_dataframe(data_dataframe, end):
     assert _find_end(data_dataframe) == end
+
+
+# test the case where an empty DataFrame is passed
+def test_no_header_df_empty():
+
+    dataframe = DataFrame({})
+
+    expected = DataFrame({})
+    result = _no_header_df(dataframe)
+
+    assert expected.equals(result)
+
+
+# tests the case where a 1x1 dataframe is passed
+def test_no_header_df_1x1():
+
+    dataframe = DataFrame({"x": [1], "y": [2]})
+
+    expected = DataFrame({0: ["x", 1], 1: ["y", 2]})
+    result = _no_header_df(dataframe)
+
+    assert expected.equals(result)
+
+
+# tests the case where a 2x3 dataframe is passed
+def test_no_header_df_2x3():
+
+    dataframe = DataFrame({"x": [1, 2], "y": [3, 4]})
+
+    expected = DataFrame({0: ["x", 1, 2], 1: ["y", 3, 4]})
+    result = _no_header_df(dataframe)
+
+    assert expected.equals(result)
 
 
 # TODO: !!! add tests for when users download during sem 1 versus sem 2
