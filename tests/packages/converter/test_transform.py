@@ -124,4 +124,64 @@ def test_no_header_df_2x3():
     assert expected.equals(result)
 
 
+# test the case where an empty DataFrame is passed
+# and skiprows is provided
+def test_no_header_df_empty_skip():
+
+    dataframe = DataFrame({})
+
+    expected = DataFrame({})
+    result = _no_header_df(dataframe, skiprows=1)
+
+    assert expected.equals(result)
+
+
+# tests the case where a 2x3 dataframe (df) is passed
+# and skiprows is provided and it is == 0
+def test_no_header_df_2x3_skip_0():
+
+    dataframe = DataFrame({"x": [1, 2], "y": [3, 4]})
+
+    expected = DataFrame({0: ["x", 1, 2], 1: ["y", 3, 4]})
+    result = _no_header_df(dataframe, skiprows=0)
+
+    assert expected.equals(result)
+
+
+# tests the case where a 2x3 dataframe (df) is passed
+# and skiprows is provided and is less than the length of the new df
+def test_no_header_df_2x3_skip_2():
+
+    dataframe = DataFrame({"x": [1, 2], "y": [3, 4]})
+
+    expected = DataFrame({0: [2], 1: [4]})
+    result = _no_header_df(dataframe, skiprows=2)
+
+    assert expected.equals(result)
+
+
+# tests the case where a 2x3 dataframe (df) is passed
+# and skiprows is provided and it is equal to the length of the new df
+def test_no_header_df_2x3_skip_3():
+
+    dataframe = DataFrame({"x": [1, 2], "y": [3, 4]})
+
+    expected = DataFrame({})
+    result = _no_header_df(dataframe, skiprows=3)
+
+    assert expected.equals(result)
+
+
+# tests the case where a 2x3 dataframe (df) is passed
+# and skiprows is provided and it is more than the length of the new df
+def test_no_header_df_2x3_skip_4():
+
+    dataframe = DataFrame({"x": [1, 2], "y": [3, 4]})
+
+    expected = DataFrame({})
+    result = _no_header_df(dataframe, skiprows=4)
+
+    assert expected.equals(result)
+
+
 # TODO: !!! add tests for when users download during sem 1 versus sem 2

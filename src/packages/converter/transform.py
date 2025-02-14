@@ -105,13 +105,17 @@ def _find_end(file: str | UploadedFile | DataFrame) -> int:
     """
 
     start = _find_start(file)
-    data = read_excel(file, skiprows=start + 1, header=None)
+
+    if isinstance(file, DataFrame):
+        data = _no_header_df(file, skiprows=start + 1)
+    else:
+        data = read_excel(file, skiprows=start + 1, header=None)
 
     pattern = "\w+ \w+ \(\d{8}\)"
 
     index = 0
     for val in data[0]:
-        if search(pattern, val) is None:
+        if search(pattern, str(val)) is None:
             return len(data[0]) - index
         else:
             index += 1
@@ -119,10 +123,18 @@ def _find_end(file: str | UploadedFile | DataFrame) -> int:
         return 0
 
 
-def _no_header_df(dataframe: DataFrame) -> DataFrame:
+def _no_header_df(dataframe: DataFrame, skiprows: int = None) -> DataFrame:
     """
     Makes a new dataframe where the header of dataframe moves down and
     a new header is set to be ints starting from 0
+
+    Args:
+        dataframe (DataFrame): a pandas DataFrame
+
+        skiprows (int): the number of rows to skip from
+                        the begining of the DataFrame.This behaves like
+                        the skiprows argument in the
+                        read functions of pandas
     """
 
     if dataframe.equals(DataFrame({})):
@@ -134,6 +146,9 @@ def _no_header_df(dataframe: DataFrame) -> DataFrame:
     old_values = new_dataframe.values.tolist()
 
     new_values = [old_header] + old_values
+
+    if skiprows:
+        new_values = new_values[skiprows:]
 
     return DataFrame(new_values)
 
